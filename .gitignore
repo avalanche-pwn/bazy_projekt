@@ -1,3 +1,10 @@
+pwd.txt
+user.txt
+db.txt
+data/
+Scripts/
+.dbeaver
+.project
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
