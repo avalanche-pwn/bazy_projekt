@@ -53,3 +53,12 @@ create table if not exists reserved_items(
 	manufacturer_code VARCHAR(50) references equipment(manufacturer_code),
 	quantity INTEGER
 );
+
+grant select, insert, update, delete on users to backend_user;
+grant select, insert, update, delete on reservations to backend_user;
+grant select, insert, update, delete on reserved_items to backend_user;
+grant select, insert, update, delete on equipment to backend_user;
+grant select, insert, update, delete on users to backend_user;
+grant select, insert, update, delete on categories to backend_user;
+grant select, insert, update, delete on ammunition to backend_user;
+grant select, insert, update, delete on guns to backend_user;
