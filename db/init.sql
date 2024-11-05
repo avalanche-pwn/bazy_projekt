@@ -2,7 +2,7 @@ create table if not exists users (
     user_id INTEGER,
     name VARCHAR(50) not null,
     surname VARCHAR(50) not null,
-    email VARCHAR(100) unique,
+    email VARCHAR(100) unique not null,
     pwd_salty VARCHAR(100) not null,
     verified BOOLEAN default false,
     creation_date DATE not null,
