@@ -1,57 +1,56 @@
-
 create table if not exists users (
-	user_id INTEGER,
+    user_id INTEGER,
     name VARCHAR(50) not null,
     surname VARCHAR(50) not null,
     email VARCHAR(100) unique,
     pwd_salty VARCHAR(100) not null,
     verified BOOLEAN default false,
     creation_date DATE not null,
- 	constraint pk_users primary key(user_id)
+    constraint pk_users primary key(user_id)
 );
 
 create table if not exists categories (
-	cat_id INTEGER primary key,
-	name VARCHAR(50) not null,
-	parent_cat_id INTEGER
+    cat_id INTEGER primary key,
+    name VARCHAR(50) not null,
+    parent_cat_id INTEGER
 );;
 
 alter table categories drop constraint if exists parent;
 alter table categories add constraint parent foreign key (parent_cat_id)
-	references categories(cat_id);
-	
+    references categories(cat_id);
+    
 
 create table if not exists equipment (
-	manufacturer_code VARCHAR(50) primary key,
-	name VARCHAR(50) not null,
-	model VARCHAR(50) not null,
-	quantity INTEGER,
-	caliber VARCHAR(10) not null,
-	type INTEGER references categories(cat_id)
+    manufacturer_code VARCHAR(50) primary key,
+    name VARCHAR(50) not null,
+    model VARCHAR(50) not null,
+    quantity INTEGER,
+    caliber VARCHAR(10) not null,
+    type INTEGER references categories(cat_id)
 );
 
 create table if not exists ammunition (
-	manufacturer_code VARCHAR(50) references equipment(manufacturer_code),
-	rim_or_centerfire VARCHAR(20) not null,
-	weight INTEGER not null,
-	price_per_round INTEGER not null
+    manufacturer_code VARCHAR(50) references equipment(manufacturer_code),
+    rim_or_centerfire VARCHAR(20) not null,
+    weight INTEGER not null,
+    price_per_round INTEGER not null
 );
 create table if not exists guns (
-	manufacturer_code VARCHAR(50) references equipment(manufacturer_code),
-	price_per_hour INTEGER not null
+    manufacturer_code VARCHAR(50) references equipment(manufacturer_code),
+    price_per_hour INTEGER not null
 );
 create table if not exists reservations (
-	reservation_id INTEGER primary key,
-	start_time TIMESTAMP not null,
-	end_time TIMESTAMP not null,
-	constraint reservation_time check(end_time - start_time < interval '2 hours'),
-	user_id INTEGER references users(user_id)
+    reservation_id INTEGER primary key,
+    start_time TIMESTAMP not null,
+    end_time TIMESTAMP not null,
+    constraint reservation_time check(end_time - start_time < interval '2 hours'),
+    user_id INTEGER references users(user_id)
 );
 
 create table if not exists reserved_items(
-	reservation_id INTEGER references reservations(reservation_id),
-	manufacturer_code VARCHAR(50) references equipment(manufacturer_code),
-	quantity INTEGER
+    reservation_id INTEGER references reservations(reservation_id),
+    manufacturer_code VARCHAR(50) references equipment(manufacturer_code),
+    quantity INTEGER
 );
 
 grant select, insert, update, delete on users to backend_user;
