@@ -33,11 +33,13 @@ create table if not exists ammunition (
     manufacturer_code VARCHAR(50) references equipment(manufacturer_code),
     rim_or_centerfire VARCHAR(20) not null,
     weight INTEGER not null,
-    price_per_round INTEGER not null
+    price_per_round INTEGER not null,
+    constraint pk_ammunition primary key(manufacturer_code)
 );
 create table if not exists guns (
     manufacturer_code VARCHAR(50) references equipment(manufacturer_code),
-    price_per_hour INTEGER not null
+    price_per_hour INTEGER not null,
+    constraint pk_guns primary key(manufacturer_code)
 );
 create table if not exists reservations (
     reservation_id INTEGER primary key,
