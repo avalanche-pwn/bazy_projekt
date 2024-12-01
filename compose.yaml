@@ -26,7 +26,7 @@ services:
       - db_passwd_back
       - db_user
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U $(cat /run/secrets/db_user) -d docker"]
       interval: 5s
       timeout: 5s
       retries: 5
