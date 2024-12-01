@@ -1,13 +1,8 @@
 services:
   postgres:
-    build: 
-      context: ./db
-      secrets:
-        - db_passwd
-        - db_passwd_back
-        - db_user
-    container_name: postgres
+    image: postgres:latest
     restart: always
+    container_name: postgres
     # set shared memory limit when using docker-compose
     shm_size: 128mb
     # or set shared memory limit when deploy via swarm stack
@@ -20,6 +15,8 @@ services:
       - 5432:5432
     volumes:
       - ./data:/var/lib/postgresql/data
+      - ./db/create_user.sh:/docker-entrypoint-initdb.d/1_create_user.sh
+      - ./db/init.sql:/docker-entrypoint-initdb.d/2_create_db.sql
     environment:
       POSTGRES_USER_FILE: /run/secrets/db_user
       POSTGRES_PASSWORD_FILE: /run/secrets/db_passwd
@@ -28,10 +25,16 @@ services:
       - db_passwd
       - db_passwd_back
       - db_user
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   backend:
     build: ./backend
     depends_on: 
-      - postgres
+      postgres:
+        condition: service_healthy
     ports:
       - 5000:5000
     develop:

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block header %}
+  <h1>{% block title %}Logowanie{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form method="post" url="auth/login" class="w-50 text-center m-auto mt-5">
+  <div class="input-group mb-3">
+    <span class="input-group-text">E-mail</span>
+    <input class="form-control" type="email" name="email"/>
+  </div>
+  <div class="input-group mb-3">
+    <span class="input-group-text">Hasło</span>
+    <input type="password" name="password" class="form-control"/>
+   </div>
+  <input class="btn btn-primary" type="submit" value="Zaloguj się"/>
+</form>
+{% endblock %}
