@@ -1,30 +1,17 @@
 {% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
 {% block header %}
   <h1>{% block title %}Rejestracja{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-<form method="post" url="auth/register" class="w-50 text-center m-auto mt-5">
-  <div class="input-group mb-3">
-    <span class="input-group-text">Imię</span>
-    <input class="form-control" type="text" name="name"/>
-  </div>
-  <div class="input-group mb-3">
-    <span class="input-group-text">Nazwisko</span>
-    <input class="form-control" type="text" name="surname"/>
-  </div>
-  <div class="input-group mb-3">
-    <span class="input-group-text">E-mail</span>
-    <input class="form-control" type="email" name="email"/>
-  </div>
-  <div class="input-group mb-3">
-    <span class="input-group-text">Hasło</span>
-    <input class="form-control" type="password" name="password"/>
-  </div>
-  <div class="input-group mb-3">
-    <span class="input-group-text">Powtórz hasło</span>
-    <input class="form-control" type="password" name="password_repeat"/>
-  </div>
-  <input type="submit" value="Zarejestruj się" class="btn btn-primary"/>
+<form method="post" url="auth/register" class="w-50 m-auto mt-5">
+  {{ form.csrf_token }}
+  {{ render_field(form.name) }}
+  {{ render_field(form.surname) }}
+  {{ render_field(form.email) }}
+  {{ render_field(form.password) }}
+  {{ render_field(form.confirm) }}
+  <input type="submit" value="Zarejestruj się" class="btn btn-primary mt-3 d-block m-auto"/>
 </form>
 {% endblock %}

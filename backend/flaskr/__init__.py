@@ -3,6 +3,7 @@ import os
 from flask import Flask
 from flaskr import auth
 from flaskr.extensions import pgdb
+from flask_wtf import CSRFProtect 
 
 
 def create_app(test_config=None):
@@ -21,6 +22,7 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
 
     pgdb.init_app(app)
+    CSRFProtect(app)
 
     app.register_blueprint(auth.bp)
 
