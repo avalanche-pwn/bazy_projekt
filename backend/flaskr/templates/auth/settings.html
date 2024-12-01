@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
+{% block header %}
+  <h1>{% block title %}Ustawienia konta{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form method="post" action="/settings/edit_data" class="w-50 m-auto mt-5">
+    <h2>Zaktualizuj dane:</h2>
+  {{ edit_form.csrf_token }}
+  {{ render_field(edit_form.name, value=user.name) }}
+  {{ render_field(edit_form.surname, value=user.surname) }}
+  {{ render_field(edit_form.email, value=user.email) }}
+  <input type="submit" value="Aktualizuj" class="btn btn-primary mt-3 d-block m-auto"/>
+</form>
+<form method="post" action="/settings/edit_passwd" class="w-50 m-auto mt-5">
+    <h2>Zmień hasło</h2>
+  {{ pwd_form.csrf_token }}
+  {{ render_field(pwd_form.password) }}
+  {{ render_field(pwd_form.confirm) }}
+  <input type="submit" value="Zmień hasło" class="btn btn-primary mt-3 d-block m-auto"/>
+</form>
+<form method="post" action="/settings/delete" class="w-50 m-auto mt-5">
+    <h2>Usuń konto</h2>
+  {{ delete_form.csrf_token }}
+  <input type="submit" value="Usuń konto" class="btn btn-danger mt-3 d-block m-auto"/>
+</form>
+{% endblock %}

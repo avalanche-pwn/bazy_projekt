@@ -5,6 +5,8 @@ import bcrypt
 import psycopg2
 from wtforms import StringField, PasswordField, validators
 from flaskr.form import BaseForm
+from dataclasses import dataclass
+from flaskr.models import User
 
 from flask import (
     Blueprint,
@@ -24,11 +26,35 @@ def redirect_loggedin(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if session.get("user_id"):
-            return redirect("/")
+            return redirect(url_for("settings.settings"))
 
         return view(**kwargs)
 
     return wrapped_view
+
+
+def required_loggedin(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if not session.get("user_id"):
+            flash(FlashMsg("danger", "Wymagane zalogowanie"))
+            return redirect(url_for("auth.login"))
+
+        return view(**kwargs)
+
+    return wrapped_view
+
+
+def fetch_user(user_id):
+    with pgdb.get_cursor() as cursor:
+        cursor.execute(
+            "SELECT user_id, name, surname, email FROM users WHERE user_id = %s",
+            (user_id,),
+        )
+        if not (res := cursor.fetchall()):
+            raise ValueError("User doesn't exist")
+        row = res[0]
+        return User(row[1], row[2], row[3])
 
 
 class RegisterForm(BaseForm):
@@ -44,7 +70,12 @@ class RegisterForm(BaseForm):
         [validators.DataRequired(), validators.Length(min=10, max=100)],
     )
     password = PasswordField(
-        "Hasło", [validators.DataRequired(), validators.Length(min=10, max=72)]
+        "Hasło",
+        [
+            validators.DataRequired(),
+            validators.Length(min=10, max=72),
+            validators.EqualTo("confirm", message="Hasła się nie zgadzają"),
+        ],
     )
     confirm = PasswordField(
         "Powtórz hasło", [validators.Length(min=10, max=72)]
@@ -77,7 +108,7 @@ def login():
             ):
                 session["user_id"] = res[0][0]
                 session["is_admin"] = res[0][2]
-                return redirect("/")
+                return redirect(url_for("settings.settings"))
 
             flash(FlashMsg("danger", "Błędny email lub hasło"))
 

@@ -2,14 +2,17 @@
   <div class="form-group row p-1">
     {{ field.label(class="col-sm-4 col-form-label text-right") }}
     <div class="col-sm-8">
-      {{ field(class="form-control")|safe }}
+      {{ field(class="form-control", **kwargs)|safe }}
     </div>
   </div>
   {% if field.errors %}
-    <ul class=errors>
+  <div class="row p-1">
+    <div name="placeholder" class="col-sm-4"></div>
+    <ul class="col-sm-8">
     {% for error in field.errors %}
       <li class="form-text">{{ error }}</li>
     {% endfor %}
     </ul>
+  </div>
   {% endif %}
 {% endmacro %}

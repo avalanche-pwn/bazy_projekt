@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from flaskr import auth
+from flaskr import auth, settings
 from flaskr.extensions import pgdb
 from flask_wtf import CSRFProtect 
 
@@ -25,6 +25,7 @@ def create_app(test_config=None):
     CSRFProtect(app)
 
     app.register_blueprint(auth.bp)
+    app.register_blueprint(settings.bp)
 
     # ensure the instance folder exists
     try:
