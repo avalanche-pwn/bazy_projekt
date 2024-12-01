@@ -1,6 +1,11 @@
 services:
   postgres:
-    build: ./db
+    build: 
+      context: ./db
+      secrets:
+        - db_passwd
+        - db_passwd_back
+        - db_user
     container_name: postgres
     restart: always
     # set shared memory limit when using docker-compose
@@ -19,4 +24,28 @@ services:
       POSTGRES_USER_FILE: /run/secrets/db_user
       POSTGRES_PASSWORD_FILE: /run/secrets/db_passwd
       POSTGRES_DB: docker
+    secrets:
+      - db_passwd
+      - db_passwd_back
+      - db_user
+  backend:
+    build: ./backend
+    depends_on: 
+      - postgres
+    ports:
+      - 5000:5000
+    develop:
+      watch:
+        - action: sync
+          path: backend
+          target: /code
+    secrets:
+      - db_passwd_back
 
+secrets:
+  db_passwd_back:
+    file: ./db/pwd_back.txt
+  db_passwd:
+    file: ./db/pwd.txt
+  db_user:
+    file: ./db/user.txt
