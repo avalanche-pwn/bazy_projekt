@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
+{% block header %}
+  <h1>{% block title %}Logowanie{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form method="post" url="auth/login" class="w-50 m-auto mt-5">
+  {{ form.csrf_token }}
+  {{ render_field(form.email) }}
+  {{ render_field(form.password) }}
+  <input class="btn btn-primary mt-3 d-block m-auto" type="submit" value="Zaloguj się"/>
+</form>
+{% endblock %}

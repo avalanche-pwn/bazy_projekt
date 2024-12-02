@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista Amunicji</title>
+</head>
+<body>
+    <h1>Lista Amunicji</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nazwa</th>
+                <th>Model</th>
+                <th>Kaliber</th>
+                <th>Typ (Rimfire/Centralfire)</th>
+                <th>Waga (g)</th>
+                <th>Cena za sztukę</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ammo in ammunition %}
+            <tr>
+                <td>{{ ammo[0] }}</td>
+                <td>{{ ammo[1] }}</td>
+                <td>{{ ammo[2] }}</td>
+                <td>{{ ammo[3] }}</td>
+                <td>{{ ammo[4] }} g</td>
+                <td>{{ ammo[5] }} PLN</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista Broni</title>
+</head>
+<body>
+    <h1>Lista Broni</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nazwa</th>
+                <th>Model</th>
+                <th>Kaliber</th>
+                <th>Cena za godzinę</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for gun in guns %}
+            <tr>
+                <td>{{ gun[0] }}</td>
+                <td>{{ gun[1] }}</td>
+                <td>{{ gun[2] }}</td>
+                <td>{{ gun[3] }} PLN</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
