@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Wyniki wyszukiwania</h2>
+
+  <div class="row">
+    {% if items %}
+      {% for item in items %}
+      <div class="col-md-4">
+        <div class="card">
+          <img class="card-img-top" src="{{ item.image_file }}" alt="Card image cap">
+          <div class="card-body">
+            <h5 class="card-title">{{ item.name }} ({{ item.model }})</h5>
+            <p class="card-text">Cena za godzinę: {{ item.price_per_hour }} zł</p>
+            <a href="{{ url_for('reservations.reserve', item_id=item.manufacturer_code, item_type='gun') }}" class="btn btn-primary">Rezerwuj broń</a>
+            <a href="{{ url_for('reservations.reserve', item_id=item.manufacturer_code, item_type='ammunition') }}" class="btn btn-primary">Rezerwuj amunicję</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p>Brak wyników. Spróbuj innych filtrów.</p>
+    {% endif %}
+  </div>
+{% endblock %}

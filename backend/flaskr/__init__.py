@@ -1,10 +1,9 @@
 import os
 
 from flask import Flask
-from flaskr import auth, settings, admin
+from flaskr import auth, settings, admin, reservations  # Dodajemy import blueprintu reservations
 from flaskr.extensions import pgdb
-from flask_wtf import CSRFProtect 
-
+from flask_wtf import CSRFProtect
 
 def create_app(test_config=None):
     # create and configure the app
@@ -27,9 +26,11 @@ def create_app(test_config=None):
     pgdb.init_app(app)
     CSRFProtect(app)
 
+    # Rejestrujemy blueprinty
     app.register_blueprint(auth.bp)
     app.register_blueprint(settings.bp)
     app.register_blueprint(admin.bp)
+    app.register_blueprint(reservations.bp)  # Rejestracja blueprintu reservations
 
     # ensure the instance folder exists
     try:
