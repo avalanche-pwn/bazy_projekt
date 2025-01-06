@@ -33,3 +33,14 @@ class PostgresDB:
             con.commit()
         finally:
             self.pool.putconn(con)
+
+    @contextmanager
+    def get_con_cursor(self):
+        if self.pool is None:
+            self.connect()
+        con = self.pool.getconn()
+        try:
+            yield con, con.cursor()
+            con.commit()
+        finally:
+            self.pool.putconn(con)

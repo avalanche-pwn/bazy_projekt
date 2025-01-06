@@ -2,7 +2,7 @@ from flaskr.extensions import pgdb
 from flaskr.flash_msg import FlashMsg
 from flask import current_app as app
 import psycopg2
-from wtforms import StringField, PasswordField, validators, IntegerField, HiddenField, RadioField, FileField
+from wtforms import StringField, PasswordField, validators, IntegerField, HiddenField, RadioField, FileField, SelectField, DecimalField, FormField, SubmitField
 from flaskr.form import BaseForm
 from flaskr.auth import required_loggedin, fetch_user, required_admin
 from flaskr.models import User
@@ -29,10 +29,27 @@ from flask import (
 bp = Blueprint("admin", __name__, url_prefix="/administration")
 
 
-class AddType(BaseForm):
-    name = StringField("Wyświetlana nazwa",
-                       [validators.DataRequired(),
-                        validators.Length(max=50)])
+class AmmoForm(BaseForm):
+    rim_or_centerfire = SelectField("Rodzaj",
+                                    choices=["rim", "centerfire"],
+                                    validators=[validators.DataRequired()])
+    weight = IntegerField("Waga", validators=[validators.DataRequired()])
+    price = DecimalField("Cena za sztukę",
+                         validators=[validators.DataRequired()])
+    submit = SubmitField("Dodaj")
+
+
+class GunForm(BaseForm):
+    price = DecimalField("Cena za godzinę",
+                         validators=[validators.DataRequired()])
+    submit = SubmitField("Dodaj")
+
+
+class AddTypeMain(BaseForm):
+    gun_name = StringField(
+        "Wyświetlana nazwa",
+        [validators.DataRequired(),
+         validators.Length(max=50)])
     model = StringField(
         "Model",
         [validators.DataRequired(),
@@ -49,6 +66,12 @@ class AddType(BaseForm):
     image = FileField("Zdjęcie")
     parent_category = HiddenField(id="parent_cat",
                                   validators=[validators.DataRequired()])
+
+
+class AddType(BaseForm):
+    common = FormField(AddTypeMain)
+    ammo = FormField(AmmoForm)
+    gun = FormField(GunForm)
 
 
 class AddCategory(BaseForm):
@@ -151,6 +174,41 @@ def open_chosen_cat(tree: CatTree, chosen: int) -> bool:
     return False
 
 
+def insert_equipment(form: AddType, filename: str) -> None:
+    with pgdb.get_con_cursor() as (con, cursor):
+        try:
+            cursor.execute(
+                """
+            INSERT INTO equipment (manufacturer_code, image_file, name, model, quantity, caliber, type)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (form.common.model.data, filename, form.common.gun_name.data,
+                  form.common.model.data, form.common.quantity.data,
+                  form.common.caliber.data, form.common.parent_category.data))
+
+            if form.gun.submit.data and form.gun.validate(form):
+                cursor.execute(
+                    """
+                INSERT INTO guns (manufacturer_code, price_per_hour) VALUES (%s, %s)
+                """, (form.common.model.data, form.gun.price.data))
+            elif form.ammo.submit.data and form.ammo.validate(form):
+                cursor.execute(
+                    """
+                INSERT INTO ammunition (manufacturer_code, rim_or_centerfire, weight, price_per_round)
+                VALUES (%s, %s, %s, %s)
+                """, (form.common.model.data, form.ammo.rim_or_centerfire.data,
+                      form.ammo.weight.data, form.ammo.price.data))
+            else:
+                con.rollback()
+                flash(FlashMsg("warning", "Nieprawidłowe dane w formularzu"))
+                return
+
+            flash(FlashMsg("success", "Dodano"))
+        except psycopg2.errors.UniqueViolation:
+            flash(
+                FlashMsg("danger",
+                         "Model o takim kodzie producent już jest dodany"))
+
+
 @bp.route("/", methods=("GET", "POST"))
 @required_admin
 def index() -> Response:
@@ -167,12 +225,12 @@ def index() -> Response:
 
     errors = False
     if request.method == "POST":
-        if not form.validate():
+        if not form.common.validate(form):
             flash(FlashMsg("danger", "Nieprawidłowe dane w formularzu"))
             errors = True
 
-        if "image" in request.files:
-            file = request.files["image"]
+        if "common-image" in request.files:
+            file = request.files["common-image"]
             extension = secure_filename(file.filename.split(".")[-1]).lower()
             filename = uuid4().hex + "." + extension
             if extension in ["jpg", "png"]:
@@ -185,18 +243,7 @@ def index() -> Response:
             errors = True
 
         if not errors:
-            with pgdb.get_cursor() as cursor:
-                try:
-                    cursor.execute(
-                        """
-                    INSERT INTO equipment (manufacturer_code, image_file, name, model, quantity, caliber, type)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                    """, (form.model.data, filename, form.name.data, form.model.data,
-                          form.quantity.data, form.caliber.data,
-                          form.parent_category.data))
-                    flash(FlashMsg("success", "Dodano"))
-                except psycopg2.errors.UniqueViolation:
-                    flash(FlashMsg("danger", "Model o takim kodzie producent już jest dodany"))
+            insert_equipment(form, filename)
 
     cats1, cats2 = tee(av_categories(), 2)
     cat_tree = cat_tree_builder(cats1)

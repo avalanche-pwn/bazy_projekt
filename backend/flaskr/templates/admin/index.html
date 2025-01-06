@@ -8,17 +8,46 @@
 <form method="post" action="{{url_for('admin.index') }}" class="w-50 m-auto mt-5" enctype = "multipart/form-data">
     <h2>Dodaj nowy egzemplarz</h2>
   {{ add_type_form.csrf_token }}
-  {{ add_type_form.parent_category }}
-  {{ render_field(add_type_form.name) }}
-  {{ render_field(add_type_form.model) }}
-  {{ render_field(add_type_form.quantity) }}
-  {{ render_field(add_type_form.caliber) }}
-  {{ render_field(add_type_form.image) }}
+  {{ add_type_form.common.parent_category }}
+  {{ render_field(add_type_form.common.gun_name) }}
+  {{ render_field(add_type_form.common.model) }}
+  {{ render_field(add_type_form.common.quantity) }}
+  {{ render_field(add_type_form.common.caliber) }}
+  {{ render_field(add_type_form.common.image) }}
   <div class="row p-1">
     <div class="col-sm-4"></div>
     <button type="button" class="btn btn-secondary col-sm-8" data-bs-toggle="modal" data-bs-target="#categoryModal">Wybierz kategorię</button>
   </div>
-  <input type="submit" value="Dodaj" class="btn btn-primary mt-3 d-block m-auto"/>
+    <div class="accordion accordion-flush pt-1" id="accordionFlushExample">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gun" aria-expanded="false" aria-controls="gun">
+              Broń
+          </button>
+        </h2>
+        <div id="gun" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+              {{ render_field(add_type_form.gun.price, required=False) }}
+              {{ add_type_form.gun.submit(class="btn btn-primary mt-3 d-block m-auto") }}
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ammo" aria-expanded="false" aria-controls="ammo" >
+              Amunicja
+          </button>
+        </h2>
+        <div id="ammo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+              {{ render_field(add_type_form.ammo.rim_or_centerfire, required=False) }}
+              {{ render_field(add_type_form.ammo.weight, required=False) }}
+              {{ render_field(add_type_form.ammo.price, required=False) }}
+              {{ add_type_form.ammo.submit(class="btn btn-primary mt-3 d-block m-auto") }}
+          </div>
+        </div>
+      </div>
+    </div>
 </form>
 
 
