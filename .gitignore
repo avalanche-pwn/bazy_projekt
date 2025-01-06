@@ -6,6 +6,8 @@ data/
 Scripts/
 .dbeaver
 .project
+uploads/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
+{% block header %}
+  <h1>{% block title %}Ustawienia konta{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form method="post" action="{{url_for('admin.index') }}" class="w-50 m-auto mt-5" enctype = "multipart/form-data">
+    <h2>Dodaj nowy egzemplarz</h2>
+  {{ add_type_form.csrf_token }}
+  {{ add_type_form.parent_category }}
+  {{ render_field(add_type_form.name) }}
+  {{ render_field(add_type_form.model) }}
+  {{ render_field(add_type_form.quantity) }}
+  {{ render_field(add_type_form.caliber) }}
+  {{ render_field(add_type_form.image) }}
+  <div class="row p-1">
+    <div class="col-sm-4"></div>
+    <button type="button" class="btn btn-secondary col-sm-8" data-bs-toggle="modal" data-bs-target="#categoryModal">Wybierz kategorię</button>
+  </div>
+  <input type="submit" value="Dodaj" class="btn btn-primary mt-3 d-block m-auto"/>
+</form>
+
+
+<form method="post" action="{{ url_for('admin.add_cat') }}">
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="categoryModalLabel">Wybierz kategorię</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul>
+        {% set fields = cycler(*cats.av_categories) %}
+        {% for elem in tree recursive %}
+        {% if elem is iterable %}
+        <ul class="collapse {{ "show" if loop.previtem.show else ""}}" id="field{{loop.previtem.cat_id}}" >
+        {{ loop(elem) }}
+        </ul>
+        {% else %}
+          <li class="list-group-item">
+                {% set field = fields.next() %}
+                {{ field(class="form-check-input", data_bs_toggle="collapse", data_bs_target="#field" + elem.cat_id|string) }}
+                {{ field.label(class="form-check-label") }}
+          </li>
+        {% endif %}
+        {% endfor %}
+        </ul>
+        {{ render_field(cats.new_cat) }}
+        {{ cats.csrf_token }}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary">Dodaj kategorię</button>
+        <button type="button" onclick="select()" class="btn btn-primary" data-bs-dismiss="modal">Wybierz</button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+<script type="text/javascript">
+    function select() {
+        document.querySelector("#parent_cat").value = document.querySelector('input[name="av_categories"]:checked').value
+    }
+</script>
+{% if cat %}
+<script type="text/javascript">
+  window.onload = () => {
+  var categoryModal = new bootstrap.Modal(document.getElementById('categoryModal'), {
+    keyboard: false
+  });
+  
+  categoryModal.show();
+}
+</script>
+{% endif %}
+{% endblock %}

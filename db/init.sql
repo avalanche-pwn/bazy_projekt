@@ -12,16 +12,19 @@ create table if not exists users (
 create table if not exists categories (
     cat_id SERIAL primary key,
     name VARCHAR(50) not null,
-    parent_cat_id INT
-);;
+    parent_cat_id INT default null
+);
 
 alter table categories drop constraint if exists parent;
 alter table categories add constraint parent foreign key (parent_cat_id)
     references categories(cat_id);
+
+insert into categories (name) values ('Wszystko');
     
 
 create table if not exists equipment (
     manufacturer_code VARCHAR(50) primary key,
+    image_file VARCHAR(150) not null,
     name VARCHAR(50) not null,
     model VARCHAR(50) not null,
     quantity INTEGER,
@@ -64,3 +67,4 @@ grant select, insert, update, delete on categories to backend_user;
 grant select, insert, update, delete on ammunition to backend_user;
 grant select, insert, update, delete on guns to backend_user;
 grant usage, select on users_user_id_seq to backend_user;
+grant usage, select on categories_cat_id_seq to backend_user;

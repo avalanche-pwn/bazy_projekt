@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from flaskr import auth, settings
+from flaskr import auth, settings, admin
 from flaskr.extensions import pgdb
 from flask_wtf import CSRFProtect 
 
@@ -12,6 +12,7 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
+        UPLOAD_DIR="/uploads",
     )
 
     if test_config is None:
@@ -20,12 +21,15 @@ def create_app(test_config=None):
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
+    app.jinja_env.filters['zip'] = zip
+    app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
     pgdb.init_app(app)
     CSRFProtect(app)
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(settings.bp)
+    app.register_blueprint(admin.bp)
 
     # ensure the instance folder exists
     try:

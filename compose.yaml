@@ -37,6 +37,8 @@ services:
         condition: service_healthy
     ports:
       - 5000:5000
+    volumes:
+      - ./uploads:/uploads
     develop:
       watch:
         - action: sync

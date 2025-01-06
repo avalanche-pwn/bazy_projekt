@@ -44,6 +44,17 @@ def required_loggedin(view):
 
     return wrapped_view
 
+def required_admin(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if not session.get("user_id") or not session.get("is_admin"):
+            flash(FlashMsg("danger", "Wymagane zalogowanie"))
+            return redirect(url_for("auth.login")), 403
+
+        return view(**kwargs)
+
+    return wrapped_view
+
 
 def fetch_user(user_id):
     with pgdb.get_cursor() as cursor:
