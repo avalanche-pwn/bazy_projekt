@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% from "_formhelpers.html" import render_field %}
+{% from "_formhelpers.html" import render_cat_field %}
 {% block header %}
   <h1>{% block title %}Ustawienia konta{% endblock %}</h1>
 {% endblock %}
@@ -60,22 +61,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <ul>
-        {% set fields = cycler(*cats.av_categories) %}
-        {% for elem in tree recursive %}
-        {% if elem is iterable %}
-        <ul class="collapse {{ "show" if loop.previtem.show else ""}}" id="field{{loop.previtem.cat_id}}" >
-        {{ loop(elem) }}
-        </ul>
-        {% else %}
-          <li class="list-group-item">
-                {% set field = fields.next() %}
-                {{ field(class="form-check-input", data_bs_toggle="collapse", data_bs_target="#field" + elem.cat_id|string) }}
-                {{ field.label(class="form-check-label") }}
-          </li>
-        {% endif %}
-        {% endfor %}
-        </ul>
+        {{ render_cat_field(tree, cats.av_categories) }}
         {{ render_field(cats.new_cat) }}
         {{ cats.csrf_token }}
       </div>

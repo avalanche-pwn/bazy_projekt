@@ -19,7 +19,12 @@ alter table categories drop constraint if exists parent;
 alter table categories add constraint parent foreign key (parent_cat_id)
     references categories(cat_id);
 
-insert into categories (name) values ('Wszystko');
+DO $$DECLARE new_id INT;
+BEGIN
+    insert into categories (name) values ('Wszystko') returning cat_id INTO new_id;
+    insert into categories (name, parent_cat_id) values ('Broń', new_id);
+    insert into categories (name, parent_cat_id) values ('Amunicja', new_id);
+END $$;
     
 
 create table if not exists equipment (
@@ -28,7 +33,7 @@ create table if not exists equipment (
     name VARCHAR(50) not null,
     model VARCHAR(50) not null,
     quantity INTEGER,
-    caliber VARCHAR(10) not null,
+    caliber DECIMAL(4, 2) not null,
     type INTEGER references categories(cat_id)
 );
 

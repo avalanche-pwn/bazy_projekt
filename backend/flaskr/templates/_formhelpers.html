@@ -16,3 +16,22 @@
   </div>
   {% endif %}
 {% endmacro %}
+
+{% macro render_cat_field(tree, av_categories) %}
+<ul>
+{% set fields = cycler(*av_categories) %}
+{% for elem in tree recursive %}
+{% if elem is iterable %}
+<ul class="collapse {{ "show" if loop.previtem.show else ""}}" id="field{{loop.previtem.cat_id}}" >
+{{ loop(elem) }}
+</ul>
+{% else %}
+  <li class="list-group-item">
+        {% set field = fields.next() %}
+        {{ field(class="form-check-input", data_bs_toggle="collapse", data_bs_target="#field" + elem.cat_id|string) }}
+        {{ field.label(class="form-check-label") }}
+  </li>
+{% endif %}
+{% endfor %}
+</ul>
+{% endmacro %}

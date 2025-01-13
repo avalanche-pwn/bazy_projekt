@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_cat_field %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block all %}
+<div class="row">
+    <div class="col-md-3">
+      <div class="list-group">
+        <h4 class="mt-4">Filtry</h4>
+        <form action="{{ url_for('listing.filter') }}" method="GET">
+          {{ render_cat_field(tree, cat_form.categories) }}
+          {{ render_field(cat_form.caliber) }}
+            <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                      Amunicja
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      {{ render_field(cat_form.rim_or_centerfire) }}
+                      {{ render_field(cat_form.weight) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          <button type="submit" class="btn btn-primary mt-3">Filtruj</button>
+          <a href="/" class="btn btn-secondary mt-3">Wyczyść</a>
+        </form>
+      </div>
+    </div>
+
+  <div class="col-md-9">
+      <h2>Wyniki wyszukiwania</h2>
+      <div class="row">
+        {% if guns or ammunition %}
+          {% for item in guns %}
+          <div class="col-md-4">
+            <div class="card">
+              <img class="card-img-top" src="{{ url_for('listing.download_file', name=item.image_file) }}" alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">{{ item.name }} ({{ item.model }})</h5>
+                <p class="card-text">Cena za godzinę: {{ item.price_per_hour }} zł</p>
+                <p class="card-text">Kaliber: {{ item.caliber }} mm</p>
+                <a href="#" class="btn btn-primary">Rezerwuj broń</a>
+                <a href="#" class="btn btn-primary">Rezerwuj amunicję</a>
+                <!--
+                --!>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% for item in ammunition %}
+          <div class="col-md-4">
+            <div class="card">
+              <img class="card-img-top" src="{{ url_for('listing.download_file', name=item.image_file) }}" alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">{{ item.name }} ({{ item.model }})</h5>
+                <p class="card-text">Cena za sztukę: {{ item.price_per_round }} zł</p>
+                <p class="card-text">Kaliber: {{ item.caliber }} mm</p>
+                <p class="card-text">Rim/Centrefire: {{ item.rim_or_centerfire }}</p>
+                <p class="card-text">Waga: {{ item.weight }} g</p>
+                <a href="#" class="btn btn-primary">Rezerwuj broń</a>
+                <a href="#" class="btn btn-primary">Rezerwuj amunicję</a>
+                <!--
+                --!>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p>Brak wyników. Spróbuj innych filtrów.</p>
+        {% endif %}
+      </div>
+  </div>
+
+  <div class="row">
+  <div class="col-md-3"></div>
+        <nav aria-label="Page navigation example", class="col-md-9">
+          <ul class="pagination justify-content-center">
+          <li class="page-item"><a class="page-link" href="{{ url_for('listing.filter', page=current_page-1, **params)}}">Previous</a></li>
+          <li class="page-item"><a class="page-link" href="{{ url_for('listing.filter', page=current_page+1, **params) }}">Next</a></li>
+          </ul>
+        </nav>
+</div>
+{% endblock %}

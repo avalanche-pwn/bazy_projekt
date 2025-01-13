@@ -1,15 +1,17 @@
 import os
 
 from flask import Flask
-from flaskr import auth, settings, admin, reservations  # Dodajemy import blueprintu reservations
+from flaskr import auth, settings, admin, listing
 from flaskr.extensions import pgdb
 from flask_wtf import CSRFProtect
 
-def create_app(test_config=None):
+
+def create_app(test_config=None) -> Flask:
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
+        PAGE_SIZE=10,
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
         UPLOAD_DIR="/uploads",
     )
@@ -30,7 +32,7 @@ def create_app(test_config=None):
     app.register_blueprint(auth.bp)
     app.register_blueprint(settings.bp)
     app.register_blueprint(admin.bp)
-    app.register_blueprint(reservations.bp)  # Rejestracja blueprintu reservations
+    app.register_blueprint(listing.bp)
 
     # ensure the instance folder exists
     try:
