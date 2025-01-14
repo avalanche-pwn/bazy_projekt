@@ -33,7 +33,7 @@ create table if not exists equipment (
     name VARCHAR(50) not null,
     model VARCHAR(50) not null,
     quantity INTEGER,
-    caliber DECIMAL(4, 2) not null,
+    caliber DECIMAL(6, 2) not null,
     type INTEGER references categories(cat_id)
 );
 
@@ -41,12 +41,12 @@ create table if not exists ammunition (
     manufacturer_code VARCHAR(50) references equipment(manufacturer_code),
     rim_or_centerfire VARCHAR(20) not null,
     weight INTEGER not null,
-    price_per_round DECIMAL(4, 2) not null,
+    price_per_round DECIMAL(6, 2) not null,
     constraint pk_ammunition primary key(manufacturer_code)
 );
 create table if not exists guns (
     manufacturer_code VARCHAR(50) references equipment(manufacturer_code),
-    price_per_hour DECIMAL(4, 2) not null,
+    price_per_hour DECIMAL(6, 2) not null,
     constraint pk_guns primary key(manufacturer_code)
 );
 create table if not exists reservations (

@@ -56,7 +56,6 @@ order by path
         [iterator] = tee((CatNode(*row) for row in cursor.fetchall()), 1)
         return iterator
 
-@lru_cache(maxsize=20)
 def child_categories(cat: int) -> list[int]:
     with pgdb.get_cursor() as cursor:
         cursor.execute("""

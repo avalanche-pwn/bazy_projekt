@@ -16,7 +16,6 @@ from datetime import datetime, timedelta
 bp = Blueprint("listing", __name__, url_prefix="/")
 
 
-@lru_cache(maxsize=1)
 def gun_cat_id() -> int:
     with pgdb.get_cursor() as cursor:
         cursor.execute("""
@@ -45,7 +44,6 @@ class ReserveForm(BaseForm):
     time = TimeField("Godzina", validators = [validators.DataRequired()])
 
 
-@lru_cache(maxsize=128)
 def is_gun(cat_id: int) -> bool:
     with pgdb.get_cursor() as cursor:
         cursor.execute(
@@ -254,10 +252,11 @@ def filter(page: int = 1) -> Response:
     cat_tree = cat_tree_builder(cats2)
     if cat := form.categories.data:
         child_cats = child_categories(cat)
-        where_clause += f" AND equipment.type IN ({','.join(('%s' for _ in child_cats))})"
-        params += child_cats
-        open_chosen_cat(cat_tree, form.categories.data)
-        form.categories.default = form.categories.data
+        if child_cats:
+            where_clause += f" AND equipment.type IN ({','.join(('%s' for _ in child_cats))})"
+            params += child_cats
+            open_chosen_cat(cat_tree, form.categories.data)
+            form.categories.default = form.categories.data
 
     if caliber := form.caliber.data:
         where_clause += " AND equipment.caliber = %s"
