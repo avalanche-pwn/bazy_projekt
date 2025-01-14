@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block header %}
+<h1>Moja rezerwacja</h1>
+{% endblock %}
+{% block content %}
+{% if guns or ammunition %}
+<form method="post">
+  {% set entries = cycler(*form.quantities) %}
+  {% for item in guns %}
+    {% set next = entries.next() %}
+    <div class="card mt-1">
+      <div class="row">
+        <div class="col-md-4">
+          <img class="img-fluid rounded-start" src="{{ url_for('listing.download_file', name=item.image_file) }}" alt="Card image cap">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">{{ item.name }} ({{ item.model }})</h5>
+            <p class="card-text">Cena za godzinę: {{ item.price_per_hour }} zł</p>
+            <p class="card-text">Kaliber: {{ item.caliber }} mm</p>
+            {{ next.csrf_token }}
+            {{ next.m_id(value=item.manufacturer_code) }}
+            {{ render_field(next.quantity) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  {% for item in ammunition %}
+    {% set next = entries.next() %}
+    <div class="card mt-1">
+      <div class="row">
+        <div class="col-md-4">
+          <img class="img-fluid rounded-start" src="{{ url_for('listing.download_file', name=item.image_file) }}" alt="Card image cap">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">{{ item.name }} ({{ item.model }})</h5>
+            <p class="card-text">Cena za sztukę: {{ item.price_per_round }} zł</p>
+            <p class="card-text">Kaliber: {{ item.caliber }} mm</p>
+            <p class="card-text">Rim/Centrefire: {{ item.rim_or_centerfire }}</p>
+            <p class="card-text">Waga: {{ item.weight }} g</p>
+            {{ next.csrf_token }}
+            {{ next.m_id(value=item.manufacturer_code) }}
+            {{ render_field(next.quantity) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  {{ render_field(form.date) }}
+  {{ render_field(form.time) }}
+  <div class="justify-content-center">
+  <button type="submit" class="btn btn-primary d-block mx-auto mt-2">Rezerwuj</button>
+  </div>
+</form>
+{% else %}
+  <p>Coś poszło nie tak</p>
+{% endif %}
+{% endblock %}

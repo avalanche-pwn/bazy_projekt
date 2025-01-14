@@ -33,6 +33,9 @@
 
   <div class="col-md-9">
       <h2>Wyniki wyszukiwania</h2>
+    {% block flash_msgs %}
+    {{ super() }}
+    {% endblock %}
       <div class="row">
         {% if guns or ammunition %}
           {% for item in guns %}
@@ -43,8 +46,7 @@
                 <h5 class="card-title">{{ item.name }} ({{ item.model }})</h5>
                 <p class="card-text">Cena za godzinę: {{ item.price_per_hour }} zł</p>
                 <p class="card-text">Kaliber: {{ item.caliber }} mm</p>
-                <a href="#" class="btn btn-primary">Rezerwuj broń</a>
-                <a href="#" class="btn btn-primary">Rezerwuj amunicję</a>
+                <a href="{{url_for("listing.reserve", type_="gun", m_code=item.manufacturer_code)}}" class="btn btn-primary">Dodaj do rezerwacji</a>
                 <!--
                 --!>
               </div>
@@ -61,10 +63,7 @@
                 <p class="card-text">Kaliber: {{ item.caliber }} mm</p>
                 <p class="card-text">Rim/Centrefire: {{ item.rim_or_centerfire }}</p>
                 <p class="card-text">Waga: {{ item.weight }} g</p>
-                <a href="#" class="btn btn-primary">Rezerwuj broń</a>
-                <a href="#" class="btn btn-primary">Rezerwuj amunicję</a>
-                <!--
-                --!>
+                <a href="{{url_for("listing.reserve", type_="ammo", m_code=item.manufacturer_code)}}" class="btn btn-primary">Dodaj do rezerwacji</a>
               </div>
             </div>
           </div>

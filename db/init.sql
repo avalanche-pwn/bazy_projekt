@@ -54,17 +54,16 @@ create table if not exists reservations (
     start_time TIMESTAMP not null,
     end_time TIMESTAMP not null,
     constraint reservation_time check(end_time - start_time < interval '2 hours'),
-    user_id INT references users(user_id),
+    user_id INT references users(user_id) NOT NULL,
     status VARCHAR(50) not null default 'reserved'
 );
 
 
 create table if not exists reserved_items (
-    reservation_id INTEGER references reservations(reservation_id),
-    manufacturer_code VARCHAR(50) references equipment(manufacturer_code),
-    ammunition_manufacturer_code VARCHAR(50) references ammunition(manufacturer_code),
-    quantity INTEGER,
-    constraint pk_reserved_items primary key(reservation_id, manufacturer_code, ammunition_manufacturer_code)
+    reservation_id INTEGER NOT NULL,
+    manufacturer_code VARCHAR(50) references equipment(manufacturer_code) NOT NULL,
+    quantity INTEGER NOT NULL,
+    FOREIGN KEY (reservation_id) references reservations(reservation_id) ON DELETE CASCADE
 );
 
 
@@ -78,3 +77,4 @@ grant select, insert, update, delete on ammunition to backend_user;
 grant select, insert, update, delete on guns to backend_user;
 grant usage, select on users_user_id_seq to backend_user;
 grant usage, select on categories_cat_id_seq to backend_user;
+grant usage, select on reservations_reservation_id_seq to backend_user;

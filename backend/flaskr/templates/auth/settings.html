@@ -1,10 +1,28 @@
 {% extends 'base.html' %}
 {% from "_formhelpers.html" import render_field %}
 {% block header %}
-  <h1>{% block title %}Ustawienia konta{% endblock %}</h1>
+  <h1>{% block title %}Moje konto{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
+{% if reservations %}
+<div class="w-50 mx-auto">
+<h2>Rezerwacje: </h2>
+    {% for reservation in reservations %}
+    <div class="card m-1">
+        <div class="row">
+        <div class="col-md-8">
+            {{ reservation[1].strftime("%Y-%m-%d %H:%M") }}
+        </div>
+        <form action={{url_for('listing.delete', r_id=reservation[0])}} method="post" class="col-md-4 text-end">
+            {{reserve_del_form.csrf_token }}
+            <input type="submit" class="btn btn-danger" value="Anuluj" />
+        </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 <form method="post" action="/settings/edit_data" class="w-50 m-auto mt-5">
     <h2>Zaktualizuj dane:</h2>
   {{ edit_form.csrf_token }}
