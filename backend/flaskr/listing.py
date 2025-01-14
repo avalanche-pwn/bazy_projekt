@@ -140,7 +140,7 @@ def insert_reservation(form: ReserveForm) -> None:
                     cursor.execute("""
                     SELECT COALESCE(SUM(ri.quantity), 0) FROM reservations
                     JOIN reserved_items ri on ri.reservation_id = reservations.reservation_id
-                    WHERE end_time between %s AND %s and ri.manufacturer_code = %s
+                    WHERE NOT (%s > end_time or %s < start_time) and ri.manufacturer_code = %s
                     """, (t, end_t, item.m_id.data))
                     sum_ = cursor.fetchone()[0]
                     if item.quantity.data + sum_ > total:
