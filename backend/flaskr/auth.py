@@ -109,7 +109,7 @@ def login():
 
         with pgdb.get_cursor() as cursor:
             cursor.execute(
-                "SELECT user_id, pwd_salty, is_admin FROM users WHERE email = %s",
+                "SELECT user_id, salty_hash, is_admin FROM users WHERE email = %s",
                 (form.email.data,),
             )
 
@@ -134,7 +134,7 @@ def register():
         with pgdb.get_cursor() as cursor:
             try:
                 cursor.execute(
-                    "INSERT INTO users (name, surname, email, pwd_salty) VALUES (%s, %s, %s, %s)",
+                    "INSERT INTO users (name, surname, email, salty_hash) VALUES (%s, %s, %s, %s)",
                     (
                         form.name.data,
                         form.surname.data,

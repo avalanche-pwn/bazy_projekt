@@ -87,7 +87,7 @@ def edit_password():
     if form.validate():
         with pgdb.get_cursor() as cursor:
             cursor.execute(
-                "UPDATE users SET pwd_salty=%s WHERE user_id=%s",
+                "UPDATE users SET salty_hash=%s WHERE user_id=%s",
                 (
                     bcrypt.hashpw(form.password.data.encode(),
                                   bcrypt.gensalt()).decode(),

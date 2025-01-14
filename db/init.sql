@@ -3,7 +3,7 @@ create table if not exists users (
     name VARCHAR(50) not null,
     surname VARCHAR(50) not null,
     email VARCHAR(100) unique not null,
-    pwd_salty VARCHAR(100) not null,
+    salty_hash VARCHAR(100) not null,
     is_admin BOOLEAN default false,
     creation_date TIMESTAMP not null default CURRENT_TIMESTAMP,
     constraint pk_users primary key(user_id)
