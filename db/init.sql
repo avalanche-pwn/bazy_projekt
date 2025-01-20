@@ -8,6 +8,7 @@ create table if not exists users (
     creation_date TIMESTAMP not null default CURRENT_TIMESTAMP,
     constraint pk_users primary key(user_id)
 );
+create unique index on users (email);
 
 create table if not exists categories (
     cat_id SERIAL primary key,
@@ -65,6 +66,7 @@ create table if not exists reserved_items (
     quantity INTEGER NOT NULL,
     FOREIGN KEY (reservation_id) references reservations(reservation_id) ON DELETE CASCADE
 );
+create index reservation_id on reserved_items (reservation_id);
 
 
 grant select, insert, update, delete on users to backend_user;
